@@ -1,0 +1,28 @@
+# systemd *user* unit for wcdocmanager (web UI + API on http://127.0.0.1:4317).
+#
+# Install:
+#   pnpm build
+#   ln -s ~/projects/wcdocmanager/deploy/wcdocmanager.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now wcdocmanager
+#
+# Logs:   journalctl --user -u wcdocmanager -f
+# Config: paths/port come from the project's .env (see .env.example).
+
+[Unit]
+Description=wcdocmanager scanned document filing app
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/projects/wcdocmanager
+# Node is managed by nvm, so its version is pinned in PATH and ExecStart below; update both after
+# a Node upgrade. The Import button runs pull-downloads.sh, which needs adb (/usr/bin) on PATH.
+Environment=PATH=%h/.nvm/versions/node/v24.20.0/bin:/usr/local/bin:/usr/bin:/bin
+Environment=NODE_ENV=production
+ExecStart=%h/.nvm/versions/node/v24.20.0/bin/node --env-file-if-exists=.env --import tsx src/server/index.ts
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

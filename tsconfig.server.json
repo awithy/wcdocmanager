@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["src/server", "src/cli", "src/shared", "vite.config.ts", "vitest.config.ts"]
+}
